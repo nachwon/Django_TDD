@@ -3,6 +3,8 @@
 from selenium import webdriver
 import unittest
 
+from selenium.webdriver.common.keys import Keys
+
 
 class NewVisitorTest(unittest.TestCase):
     def setUp(self):
@@ -17,19 +19,34 @@ class NewVisitorTest(unittest.TestCase):
         # to-do list 앱 홈페이지에 접속함.
         self.browser.get('http://localhost:8000')
 
-        # 사용자가 홈페이지의 타이틀과 헤더를 보고 맞게 찾아온것을 확인함.
+        # 사용자가 홈페이지의 타이틀과 헤더의 To-Do를 보고 맞게 찾아온것을 확인함.
         self.assertIn('To-Do', self.browser.title)
-        self.fail('Finish the test!')
+        header_text = self.browser.find_element_by_tag_name('h1').text
+        self.assertIn('To-Do', header_text)
 
         # 사용자가 해야할 일을 바로 입력할 수 있도록 준비되어있음.
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertEqual(
+            inputbox.get_attribute('placeholder'),
+            '할 일을 입력하세요.'
+        )
 
         # 사용자가 '기타줄 갈기' 를 텍스트 입력칸에 입력함.
+        inputbox.send_keys('기타줄 갈기')
 
         # 사용자가 엔터를 치면, 페이지가 갱신되고, 입력한 할일 목록이 표시됨.
         # "1: 기타줄 갈기"
+        inputbox.send_keys(Keys.Enter)
+
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertTrue(
+            any(row.text == '기타줄 갈기' for row in rows)
+        )
 
         # 다른 할일 목록을 추가할 수 있도록  텍스트 입력칸이 유지됨.
         # 사용자가 '피크 사기' 를 추가함.
+        self.fail('Finish the test!')
 
         # 페이지가 다시 갱신되고, 할일 목록에 추가한 항목이 표시됨.
         # "1: 기타줄 갈기"
