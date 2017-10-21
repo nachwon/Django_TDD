@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+import time
 from selenium import webdriver
 import unittest
 
@@ -24,7 +24,7 @@ class NewVisitorTest(unittest.TestCase):
         header_text = self.browser.find_element_by_tag_name('h1').text
         self.assertIn('To-Do', header_text)
 
-        # 사용자가 해야할 일을 바로 입력할 수 있도록 준비되어있음.
+        # 사용자가 해야할 일을 바로 입력할 수 있도록 입력칸이 준비되어있음.
         inputbox = self.browser.find_element_by_id('id_new_item')
         self.assertEqual(
             inputbox.get_attribute('placeholder'),
@@ -36,21 +36,29 @@ class NewVisitorTest(unittest.TestCase):
 
         # 사용자가 엔터를 치면, 페이지가 갱신되고, 입력한 할일 목록이 표시됨.
         # "1: 기타줄 갈기"
-        inputbox.send_keys(Keys.Enter)
+        inputbox.send_keys(Keys.ENTER)
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(
-            any(row.text == '기타줄 갈기' for row in rows)
-        )
+        self.assertIn('1: 기타줄 갈기', [row.text for row in rows])
 
         # 다른 할일 목록을 추가할 수 있도록  텍스트 입력칸이 유지됨.
         # 사용자가 '피크 사기' 를 추가함.
-        self.fail('Finish the test!')
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('피크 사기')
+        inputbox.send_keys(Keys.ENTER)
 
         # 페이지가 다시 갱신되고, 할일 목록에 추가한 항목이 표시됨.
         # "1: 기타줄 갈기"
         # "2: 피크 사기"
+
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+
+        self.assertIn('1: 기타줄 갈기', [row.text for row in rows])
+        self.assertIn('2: 피크 사기', [row.text for row in rows])
+
+        self.fail('Finish the test!')
 
         # 사용자가 이 목록을 저장하고 싶어하는 찰나에, 사이트에서 사용자를 위한 고유한 URL을 만들어 준 것을 발견함. (이 URL에 대한 설명이 달려있음)
 
