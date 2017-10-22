@@ -87,4 +87,4 @@ class NewVisitorTest(LiveServerTestCase):
 
         # 두 사용자 모두 만족함
 
-        self.fail('Finish the test!')
+        # self.fail('Finish the test!')
