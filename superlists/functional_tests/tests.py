@@ -77,7 +77,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # 새로운 사용자는 자신만의 고유한 URL을 할당받음.
         new_user_list_url = self.browser.current_url
-        self.assertIn(new_user_list_url, r'list/.+')
+        self.assertRegex(new_user_list_url, r'/lists/.+')
         self.assertNotEqual(new_user_list_url, user_list_url)
 
         # 이전 사용자의 목록이 없는지 재확인
